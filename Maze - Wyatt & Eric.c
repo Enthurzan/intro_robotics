@@ -198,7 +198,11 @@ task main()
 	forwardDistance(2.35); //go forward 2.35 tiles
 	turnLeft(); //turn left
 	forwardDistance(3); //move forward three tiles
-	rotate(45); //rotate tank turn at 45 degrees
+	
+	//rotate(45); //rotate tank turn at 45 degrees
+	//forwardDistance(1);
+	//rotate(45);
+	//forwardDistance(2.25)
 
 /*------------------------------------------------------
 
