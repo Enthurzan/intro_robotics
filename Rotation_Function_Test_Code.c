@@ -35,36 +35,43 @@ void clearEncoders ()
 
 void rotate(int degrees, int speed)
 {
-	clearEncoders(); //customary first code for every function using encoders
+	//customary first code for every function using encoders
+	clearEncoders();
 	/*
 		392/90 = x/degrees // degrees * 392 = 90x // (degrees * 392)/ 90  = x
 	*/
-	rotTicks = abs((degrees * turnTicks)/90); //finds the absolute value so ticks is always positive
-
+	//finds the absolute value so ticks is always positive
+	rotTicks = abs((degrees * turnTicks)/90);
+	//while the average of the two encoders is less than the parameter
 	while((abs(nMotorEncoder[rightMotor]) + abs(nMotorEncoder[leftMotor]))/2 < rotTicks )
+	//if the left motor has gone farther than the right motor
 	if (abs(nMotorEncoder[leftMotor]) > abs(nMotorEncoder[rightMotor])){
-		if (degrees + abs(degrees) == 0){ //so if the number is negative
+		//so if the number is negative
+		if (degrees + abs(degrees) == 0){
 			motor[leftMotor] = speed++;
 			motor[rightMotor] = speed++;
 		}
+		//if the degree parmeter is negative
 		else if (degrees + abs(degrees) != 0){
 			motor[leftMotor] = speed--;
 			motor[rightMotor] = speed--;
 			/*
 				logically this makes since because on a left turn, the left motor is going backwards
-			so 
-	}
-	else if (abs(nMotorEncoder[leftMotor]) < abs(nMotorEncoder[rightMotor])){
-		if (degrees + abs(degrees) == 0){ //if number is negative
-			motsubtracting is going to make it go faster and vise versa for the right motor
+			so subtracting is going to make it go faster and vise versa for the right motor
 
 			*/
 		}
-or[leftMotor] = speed--;
+
+	}
+	else if (abs(nMotorEncoder[leftMotor]) < abs(nMotorEncoder[rightMotor])){
+		//if number is negative
+		if (degrees + abs(degrees) == 0){
+			motor[leftMotor] = speed--;
 			motor[rightMotor] = speed--;
 
 	}
-		else if (degrees + abs(degrees) != 0){ //if number is positive
+		//if number is positive
+		else if (degrees + abs(degrees) != 0){
 			motor[leftMotor] = speed++;
 			motor[rightMotor] = speed++;
 
@@ -80,7 +87,9 @@ or[leftMotor] = speed--;
 
 task main()
 {
-	rotate(180);
+	//This little bit of code should make the robot turn 180 degrees to the right then return to the same orientation
+	rotate(180, 50);
+	rotate(-180, 50);
 
 
 }
