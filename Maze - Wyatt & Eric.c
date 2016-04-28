@@ -136,29 +136,62 @@ int move(int tileDistance, int speed)
 	clearEncoders();
 	return 0;
 }
-/*----------------------------------------------------
+/*------------------------------------------------------
+	 Super Easy to use rotating (tank turn) function:
+	 first parameter is the degrees you want to rotate
+	 second parameter is the speed you want do this
+	 uses the absolute value of what the motorEncoders read to
+	 determine PID and straightening
+	 Program is smarter in that it can negative if the input parameter is negative by using the abs() cmd
+	 to see if a + abs(a) is 0 (if its negative) or not (if its positive)
+------------------------------------------------------*/
 
-	Rotate Function
-	Paramter is degrees - only takes positive inputs, but only need that for the challenges
-
-----------------------------------------------------*/
-int rotate(int degrees)
+void rotate(int degrees, int speed)
 {
-	clearEncoders(); //customary first code for every function using encoders
+	//customary first code for every function using encoders
+	clearEncoders(); 
 	/*
 		392/90 = x/degrees // degrees * 392 = 90x // (degrees * 392)/ 90  = x
 	*/
-	rotTicks = (degrees * turnTicks)/90;
+	rotTicks = abs((degrees * turnTicks)/90); //finds the absolute value so ticks is always positive
 
-	if ((rotTicks + rotTicks)/ 2 == rotTicks) //if rotTicks is positive
-	{
-		while(((nMotorEncoder[rightMotor]) <= rotTicks) && (nMotorEncoder[leftMotor] >= -(rotTicks)))
-		{
-		motor[rightMotor] = turnSpeed;
-		motor[leftMotor] = -turnSpeed;
+	while((abs(nMotorEncoder[rightMotor]) + abs(nMotorEncoder[leftMotor]))/2 < rotTicks )
+	if (abs(nMotorEncoder[leftMotor]) > abs(nMotorEncoder[rightMotor])){
+		//so if the number is negative
+		if (degrees + abs(degrees) == 0){ 
+			motor[leftMotor] = speed++;
+			motor[rightMotor] = speed++;
+		}
+		else if (degrees + abs(degrees) != 0){
+			motor[leftMotor] = speed--;
+			motor[rightMotor] = speed--;
+			/*
+				logically this makes since because on a left turn, the left motor is going backwards
+			so subtracting is going to make it go faster and vise versa for the right motor
+			*/
+		}
+
+	}
+	else if (abs(nMotorEncoder[leftMotor]) < abs(nMotorEncoder[rightMotor])){
+		//if number is negative
+		if (degrees + abs(degrees) == 0){ 
+			motor[leftMotor] = speed--;
+			motor[rightMotor] = speed--;
+
+	}
+		//if number is positive
+		else if (degrees + abs(degrees) != 0){ 
+			motor[leftMotor] = speed++;
+			motor[rightMotor] = speed++;
+
 		}
 	}
-	return 0;
+	else {
+		motor[leftMotor] = speed;
+		motor[rightMotor] = speed;
+
+	}
+
 }
 
 /* ----------------------------------------------------
