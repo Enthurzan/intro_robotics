@@ -19,68 +19,56 @@
 
 ------------------------------------------------------*/
 
-int turnTicks = 392;
-float rotTicks;
-int turnSpeed = 50;
+//Varible Library
+int baseCounts = 392; //number of encoder counts for a 90 degree left
+int leftStatus; // 0 is equal / 1 is left Motor to fast / 2 is right motor too fast
+int rightStatus; // 0 is equal / 1 is left Motor to fast / 2 is right motor too fast
 
-
-void clearEncoders ()
+void clearEncoders () //function that sets all nMotorEncoder values to 0 (reset / zeroing)
 {
 	nMotorEncoder[rightMotor] = 0;
 	nMotorEncoder[leftMotor] = 0;
 
 }
 
-void turnLeft (int speed){
-	clearEncoders();
-	while ((abs(nMotorEncoder[rightMotor]) + abs(nMotorEncoder[leftMotor])) / 2 < 392)
-	{
-		if (abs(nMotorEncoder[leftMotor]) > abs(nMotorEncoder[rightMotor])){
-			motor[leftMotor] = speed++;
-			motor[rightMotor] = speed++;
+void turnLeft(int speed){
+	clearEncoders(); //clears the motor encoders
+	while (((nMotorEncoder[rightMotor] + abs(nMotorEncoder[leftMotor]))/2) < baseCounts){ //checks to see if the motors have gone the correct distance yet
+		if ((abs(nMotorEncoder[leftMotor]))	< nMotorEncoder[rightMotor]){ //assigns a value to leftStatus that can determine which motor is running fast or slow
+			leftStatus = 2;
 
 		}
-		else if (abs(nMotorEncoder[leftMotor]) < abs(nMotorEncoder[rightMotor])){
-			motor[rightMotor] = speed--;
-			motor[leftMotor] = speed++;
+		else if ((abs(nMotorEncoder[leftMotor])) > nMotorEncoder[rightMotor]){
+			leftStatus = 1;
 
 		}
 		else {
-			motor[rightMotor] = speed;
-			motor[leftMotor] = speed;
-		}
+			leftStatus =  0;
 
+		}
+		switch (leftStatus) {
+		case 0: //if the encoder counts are equal
+			motor[rightMotor] = speed; //set right motor to speed
+			motor[leftMotor] = -speed; //set left motor to the opposite of speed
+			break;
+
+		case 1: //if the left motor encoder counts more than the right motor encoder
+			motor[rightMotor] = speed+1; //set right motor to speed + 1(make it go faster)
+			motor[leftMotor] = -speed+1; //set the left motor to the opposite of speed + 1 (it will slow down)
+			break;
+
+		case 2: //if the right motor encoder counts more than the left motor encoder
+			motor[rightMotor] = speed-1; //set the right motor to speed - 1 (make it slow down)
+			motor[leftMotor] = -speed-1; //set the left motor to the opposite of speed - 1 (it should speed up)
+			break;
+
+		}
 	}
-
 }
-//Simply reversed the PID here because its turning right versus turning left
-void turnRight (int speed){
-	clearEncoders();
-	while ((abs(nMotorEncoder[rightMotor]) + abs(nMotorEncoder[leftMotor])) / 2 < 392)
-	{
-		if (abs(nMotorEncoder[leftMotor]) > abs(nMotorEncoder[rightMotor])){
-			motor[leftMotor] = speed--;
-			motor[rightMotor] = speed--;
-
-		}
-		else if (abs(nMotorEncoder[leftMotor]) < abs(nMotorEncoder[rightMotor])){
-			motor[rightMotor] = speed++;
-			motor[leftMotor] = speed++;
-
-		}
-		else {
-			motor[rightMotor] = speed;
-			motor[leftMotor] = speed;
-		}
-
-	}
-
-}
-
 
 task main()
 {
-
+	turnLeft();
 
 
 }
